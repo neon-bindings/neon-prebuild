@@ -51,15 +51,16 @@ function lookup(target) {
 }
 
 const targetInfo = lookup(target);
+const description = `Prebuilt binary package for ${manifest.name} on ${targetInfo.node}.`;
 
 let prebuildManifest = {
   name,
-  description: `Prebuilt binary package for ${manifest.name}.`,
+  description,
   version,
   os: [targetInfo.platform],
   cpu: [targetInfo.arch],
   main: "index.node",
-  files: ["index.node"]
+  files: ["README.md", "index.node"]
 };
 
 const OPTIONAL_KEYS = [
@@ -76,6 +77,7 @@ const tmpdir = temp.mkdirSync('neon-');
 
 fs.writeFileSync(path.join(tmpdir, "package.json"), JSON.stringify(prebuildManifest, null, 2));
 fs.copyFileSync(addon, path.join(tmpdir, "index.node"));
+fs.writeFileSync(path.join(tmpdir, "README.md", `# \`${name}\`\n\n${description}`));
 
 const result = child_process.spawnSync("npm", ["pack", "--json"], {
   shell: true,
