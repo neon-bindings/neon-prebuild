@@ -1,21 +1,68 @@
 const fs = require('fs');
 const path = require('path');
 
-function abi() {
-  return process.report.getReport().header.glibcVersionRuntime ? 'gnu' : 'musl';
-}
-
 function target() {
+  let os = null;
+
   switch (process.platform) {
+    case 'android':
+      switch (process.arch) {
+        case 'arm':
+          return 'android-arm-eabi';
+        case 'arm64':
+          return 'android-arm64';
+      }
+      os = 'Android';
+      break;
+
     case 'win32':
-      return `win32-${process.arch}-msvc`;
+      switch (process.arch) {
+        case 'x64':
+          return 'win32-x64-msvc'
+        case 'arm64':
+          return 'win32-arm64-msvc';
+        case 'ia32':
+          return 'win32-ia32-msvc';
+      }
+      os = 'Windows';
+      break;
+
     case 'darwin':
-      return `darwin-${process.arch}`;
+      switch (process.arch) {
+        case 'x64':
+          return 'darwin-x64';
+        case 'arm64':
+          return 'darwin-arm64';
+      }
+      os = 'macOS';
+      break;
+
     case 'linux':
-      return `linux-${process.arch}-${abi()}`;
-    default:
-      throw new Error(`Neon: unsupported platform ${process.platform}`);
+      switch (process.arch) {
+        case 'x64':
+        case 'arm64':
+          return process.report.getReport().header.glibcVersionRuntime
+            ? `linux-${process.arch}-gnu`
+            : `linux-${process.arch}-musl`;
+        case 'arm':
+          return 'linux-arm-gnueabihf';
+      }
+      os = 'Linux';
+      break;
+
+    case 'freebsd':
+      if (process.arch === 'x64') {
+        return 'freebsd-x64';
+      }
+      os = 'FreeBSD';
+      break;
   }
+
+  if (os) {
+    throw new Error(`Neon: unsupported ${os} architecture: ${process.arch}`);
+  }
+
+  throw new Error(`Neon: unsupported system: ${process.platform}`);
 }
 
 exports.target = target;
