@@ -92,6 +92,8 @@ if (result.status !== 0) {
 // FIXME: comment linking to the npm issue this fixes
 const tarball = JSON.parse(result.stdout)[0].filename.replace('@', '').replace('/', '-');
 
-fs.renameSync(path.join(tmpdir, tarball), path.join(process.cwd(), tarball));
+// Copy instead of move since e.g. GitHub Actions Windows runners host temp directories
+// on a different device (which causes fs.renameSync to fail).
+fs.copyFileSync(path.join(tmpdir, tarball), path.join(process.cwd(), tarball));
 
 console.log(tarball);
