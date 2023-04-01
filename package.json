@@ -4,19 +4,23 @@
   "description": "Utilities for Neon projects with prebuilds.",
   "main": "index.js",
   "bin": {
-    "neon-prepack": "./prepack.js"
+    "neon-prepack": "./prepack.js",
+    "neon-prebuild": "./prebuild.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neon-bindings/neon-loader.git"
+    "url": "git+https://github.com/neon-bindings/neon-prebuild.git"
   },
   "author": "Dave Herman <david.herman@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/neon-bindings/neon-loader/issues"
+    "url": "https://github.com/neon-bindings/neon-prebuild/issues"
   },
-  "homepage": "https://github.com/neon-bindings/neon-loader#readme"
+  "homepage": "https://github.com/neon-bindings/neon-prebuild#readme",
+  "dependencies": {
+    "temp": "^0.9.4"
+  }
 }
