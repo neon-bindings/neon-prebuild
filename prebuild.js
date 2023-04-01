@@ -77,7 +77,7 @@ const tmpdir = temp.mkdirSync('neon-');
 
 fs.writeFileSync(path.join(tmpdir, "package.json"), JSON.stringify(prebuildManifest, null, 2));
 fs.copyFileSync(addon, path.join(tmpdir, "index.node"));
-fs.writeFileSync(path.join(tmpdir, "README.md", `# \`${name}\`\n\n${description}`));
+fs.writeFileSync(path.join(tmpdir, "README.md"), `# \`${name}\`\n\n${description}`);
 
 const result = child_process.spawnSync("npm", ["pack", "--json"], {
   shell: true,
