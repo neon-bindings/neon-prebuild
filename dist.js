@@ -54,7 +54,9 @@ function die(msg) {
 }
 
 function normalize(abs) {
-  const result = child.spawnSync("cross", ["metadata", "--format-version=1", "--no-deps"]);
+  console.error("spawning cross metadata for normalization");
+  const result = child.spawnSync("cross", ["metadata", "--format-version=1", "--no-deps"], { shell: true });
+  console.error("child process complete.");
   const metadata = JSON.parse(result.stdout);
   console.error("metadata:");
   console.error(metadata);
