@@ -1,6 +1,6 @@
 {
   "name": "neon-prebuild",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Utilities for Neon projects with prebuilds.",
   "main": "index.js",
   "bin": {
