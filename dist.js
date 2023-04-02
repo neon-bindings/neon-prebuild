@@ -3,7 +3,7 @@
 const path = require('path');
 const fs = require('fs');
 const child = require('child_process');
-const toString = require('stream-to-string');
+const readline = require('readline');
 
 // FIXME: more opts:
 // - --crate-name <crate>
@@ -66,6 +66,35 @@ function normalize(abs) {
   return rel;
 }
 
+function processEvent(event, opts) {
+  const index = event.target.crate_types.indexOf('cdylib');
+  if (index < 0) {
+    die(`no library artifact found for ${opts.crateName}`);
+  }
+
+  const abs = event.filenames[index];
+
+  console.error(`manifest_path=${event.manifest_path}`);
+  console.error(`dirname(manifest_path)=${path.dirname(event.manifest_path)}`);
+  console.error(`abs=${abs}`);
+
+  const filename = opts.fromCross ? normalize(abs) : abs;
+
+  // FIXME: needs all the logic of cargo-cp-artifact (timestamp check, M1 workaround, async, errors)
+  fs.copyFileSync(filename, opts.outfile);
+}
+
+function parseLine(line) {
+  try {
+    const data = JSON.parse(line.trim());
+    if ((typeof data === 'object') && ('reason' in data)) {
+      return data;
+    }
+  } catch (ignore) { }
+  return null;
+}
+
+/*
 function processCargoMetadata(metadata, opts) {
   const sub = metadata.find(event => {
     return (event.reason === 'compiler-artifact') &&
@@ -92,10 +121,29 @@ function processCargoMetadata(metadata, opts) {
   // FIXME: needs all the logic of cargo-cp-artifact (timestamp check, M1 workaround, async, errors)
   fs.copyFileSync(filename, opts.outfile);
 }
+*/
 
 try {
   const opts = parseArgs();
-  toString(process.stdin, (err, data) => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    terminal: false
+  });
+
+  rl.on('line', line => {
+    try {
+      const event = parseLine(line);
+      if ((event.reason === 'compiler-artifact') && (event.target.name === opts.crateName)) {
+        processEvent(event, opts);
+        rl.close();
+        process.exit(0);
+      }
+    } catch (e) {
+      die(e.message);
+    }
+  });
+
+  /*toString(process.stdin, (err, data) => {
     if (err) {
       die(err.message);
     }
@@ -106,7 +154,7 @@ try {
       .map(line => JSON.parse(line));
 
     processCargoMetadata(metadata, opts);
-  });
+  });*/
 } catch (e) {
   die(e.message);
 }
