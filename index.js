@@ -68,7 +68,7 @@ function target() {
 exports.target = target;
 
 function debug(dirname) {
-  const m = path.join(dirname, "debug.node");
+  const m = path.join(dirname, "index.node");
   return fs.existsSync(m) ? require(m) : null;
 }
 

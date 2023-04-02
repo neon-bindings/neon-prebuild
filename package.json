@@ -5,9 +5,11 @@
   "main": "index.js",
   "bin": {
     "neon-prepack": "./prepack.js",
-    "neon-prebuild": "./prebuild.js"
+    "neon-prebuild": "./prebuild.js",
+    "neon-dist": "./dist.js"
   },
   "scripts": {
+    "postversion": "git push --follow-tags",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
