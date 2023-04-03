@@ -124,18 +124,25 @@ function processCargoMetadata(metadata, opts) {
 */
 
 try {
+  console.error("starting up neon-dist");
   const opts = parseArgs();
+  console.error("creating stdin stream");
   const rl = readline.createInterface({
     input: process.stdin,
     terminal: false
   });
-
+  console.error("created stderr stream");
   rl.on('line', line => {
     try {
+      console.error("reading a line");
       const event = parseLine(line);
+      console.error("read a line");
       if ((event.reason === 'compiler-artifact') && (event.target.name === opts.crateName)) {
+        console.error("found the right even, processing");
         processEvent(event, opts);
+        console.error("processed event, closing stdin stream");
         rl.close();
+        console.error("exiting");
         process.exit(0);
       }
     } catch (e) {
