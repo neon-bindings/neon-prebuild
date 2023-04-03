@@ -128,6 +128,7 @@ try {
   const opts = parseArgs();
   console.error("creating stdin stream");
   process.stdin.resume();
+  process.stdin.setEncoding('utf-8');
   const rl = readline.createInterface({
     input: process.stdin,
     terminal: false
