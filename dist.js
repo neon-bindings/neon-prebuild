@@ -123,6 +123,40 @@ function processCargoMetadata(metadata, opts) {
 }
 */
 
+async function go() {
+  try {
+    console.error("starting up neon-dist");
+    const opts = parseArgs();
+    console.error("creating stdin stream");
+    process.stdin.resume();
+    process.stdin.setEncoding('utf-8');
+    const rl = readline.createInterface({
+      input: process.stdin,
+      terminal: false
+    });
+    console.error("created stderr stream");
+    for await (const line of rl) {
+      console.error("reading a line");
+      const event = parseLine(line);
+      console.error("read a line");
+      if ((event.reason === 'compiler-artifact') && (event.target.name === opts.crateName)) {
+        console.error("found the right even, processing");
+        processEvent(event, opts);
+        console.error("processed event, closing stdin stream");
+        break;
+      }
+    }
+    rl.close();
+    console.error("exiting");
+    process.stdin.unref();
+    process.exit(0);
+  } catch (e) {
+    die(e.message);
+  }
+}
+
+
+/*
 try {
   console.error("starting up neon-dist");
   const opts = parseArgs();
@@ -152,6 +186,7 @@ try {
       die(e.message);
     }
   });
+*/
 
   /*toString(process.stdin, (err, data) => {
     if (err) {
@@ -165,6 +200,6 @@ try {
 
     processCargoMetadata(metadata, opts);
   });*/
-} catch (e) {
+/*} catch (e) {
   die(e.message);
-}
+}*/
