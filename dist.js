@@ -155,6 +155,7 @@ async function go() {
   }
 }
 
+go();
 
 /*
 try {
