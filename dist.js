@@ -127,6 +127,7 @@ try {
   console.error("starting up neon-dist");
   const opts = parseArgs();
   console.error("creating stdin stream");
+  process.stdin.resume();
   const rl = readline.createInterface({
     input: process.stdin,
     terminal: false
