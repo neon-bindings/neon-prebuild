@@ -143,6 +143,7 @@ try {
         console.error("processed event, closing stdin stream");
         rl.close();
         console.error("exiting");
+        process.stdin.unref();
         process.exit(0);
       }
     } catch (e) {
