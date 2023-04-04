@@ -146,10 +146,13 @@ async function go() {
         break;
       }
     }
-    rl.close();
-    console.error("exiting");
-    process.stdin.unref();
-    process.exit(0);
+    setTimeout(() => {
+      rl.terminal = false;
+      rl.close();
+      console.error("exiting");
+      process.stdin.unref();
+      process.exit(0);
+    }, 0);
   } catch (e) {
     die(e.message);
   }
